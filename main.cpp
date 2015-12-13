@@ -8,7 +8,7 @@
 #include "config.h"
 
 
-bool is_image(string file_name) { //является файл изображением
+bool is_image(string file_name) { 
 	if (!strrchr(file_name.c_str(), '.')) {
 		return false;
 	}
@@ -18,7 +18,7 @@ bool is_image(string file_name) { //является файл изображением
 	});
 }
 
-bool directory_exists(string &fileName) { //проверка каталога
+bool directory_exists(string &fileName) { 
 	int code = GetFileAttributes(fileName.c_str());
 	return (code != -1) && (FILE_ATTRIBUTE_DIRECTORY & code);
 }
@@ -30,10 +30,10 @@ Files get_file_list(string const & oldPath) {
 	unsigned long i = 0;
 
 	WIN32_FIND_DATA fileData;
-	HANDLE firstFile = FindFirstFile(path.c_str(), &fileData);//поиск первого файла
-	if (firstFile != INVALID_HANDLE_VALUE) {//Если файл существует
+	HANDLE firstFile = FindFirstFile(path.c_str(), &fileData);
+	if (firstFile != INVALID_HANDLE_VALUE) {
 		do {
-			if (!(fileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {//если файл не папка
+			if (!(fileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
 				files.arr_size++;
 				if (strlen(fileData.cFileName) > files.name_size)
 					files.name_size = strlen(fileData.cFileName);
@@ -73,7 +73,7 @@ void sprite_for_window(Picture &pict, Sys &sys, Files const &files) {
 		pict.zoom = float(sys.window_size.x) / pict.texture->getSize().x;
 		pict.smoth_zoom = pict.zoom * 25 / 100;
 	}
-	cout << pict.zoom << "\n";
+	cout << "zoom " << pict.zoom << "\n";
 	pict.sprite->setScale(pict.zoom, pict.zoom);
 	pict.sprite->setOrigin(float(pict.texture->getSize().x * 0.5), float(pict.texture->getSize().y / 2.0));
 	pict.title = string(files.files[pict.num]);
@@ -111,7 +111,6 @@ void drag(Picture &picture, Vector2f & cursor, Sys sys) {
 }
 
 void picture_mid(Vector2u window_size, Picture &picture) {
-	//центрирование изображения
 	picture.left = window_size.x *0.5f;
 	picture.top = window_size.y *0.5f;
 	picture.sprite->setPosition(Vector2f(picture.left, picture.top));
@@ -155,10 +154,8 @@ void draw_buttons(RenderWindow & window, Sys & sys, Sprite & left, Sprite & righ
 
 
 void draw_elements(RenderWindow & window, Sys & sys, Picture & picture, Sprite & left, Sprite & right, Sprite &plus, Sprite &minus) {
-	//отрисовка изображения
 	picture.sprite->setTexture((*picture.texture));
 	window.draw((*picture.sprite));
-	//Установка кнопок
 	char activeZoom = 0;
 	if (picture.zoom > 5 - picture.smoth_zoom) {
 		activeZoom = 1;
@@ -232,8 +229,8 @@ void picture_check_drag(Picture &picture, Vector2f pos, Sys sys) {
 void start_program(RenderWindow &window, Files files, Picture &picture, Sprite left, Sprite right, Sprite plus, Sprite minus, Sys sys, View view) {
 	while (window.isOpen()) {
 		Event event;
-		Vector2i pixelPos = Mouse::getPosition(window);//получаем координаты курсора
-		Vector2f pos = window.mapPixelToCoords(pixelPos);//переводим их в игровые (уходим от координат окна)
+		Vector2i pixelPos = Mouse::getPosition(window);
+		Vector2f pos = window.mapPixelToCoords(pixelPos);
 		while (window.pollEvent(event)) {
 
 			if (event.type == sf::Event::Closed) {
@@ -251,7 +248,7 @@ void start_program(RenderWindow &window, Files files, Picture &picture, Sprite l
 			if (event.type == Event::MouseButtonReleased && event.key.code == Mouse::Left) {
 				picture.dragMove = false;
 			}
-			//Переключение изображений
+
 			click_btn(window, files, picture, left, right, plus, minus, sys, pos);
 
 			if (event.type == Event::Resized) {
@@ -261,13 +258,11 @@ void start_program(RenderWindow &window, Files files, Picture &picture, Sprite l
 
 		}
 
-		//Сброс настроек
 		window.clear(Color(10, 10, 10));
 		view = View(FloatRect(0, 0, float(sys.window_size.x), float(sys.window_size.y)));
 		window.setView(view);
 
 
-		//Отрисовка элементов
 		draw_elements(window, sys, picture, left, right, plus, minus);
 		window.display();
 		sys.window_size = window.getSize();
@@ -278,7 +273,6 @@ int main() {
 	Sys sys;
 	sys.dir_path = "D:/images/";
 	cout << "input path (For Example: C:\\images\\)" << "\n";
-	//cin >> sys.dir_path;
 	while (!directory_exists(sys.dir_path)) {
 		cout << "input correct path" << "\n";
 		cin >> sys.dir_path;
@@ -288,7 +282,6 @@ int main() {
 	window.setVerticalSyncEnabled(true);
 	View view = View(FloatRect(0, 0, float(sys.window_size.x), float(sys.window_size.y)));
 	window.setView(view);
-	//Открытие и вывод изображения
 	Files files = get_file_list(sys.dir_path);
 	Picture picture;
 	if (files.arr_size > 0) {
