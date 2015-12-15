@@ -81,7 +81,7 @@ void sprite_for_window(Picture &pict, Sys &sys, Files const &files) {
 
 string init_picture(RenderWindow & window, Files const &files, Picture &pic, Sys & sys) {
 	if (!(pic.num < 0)) {
-		if (!pic.error) {
+		if (!pic.checkForError) {
 			delete(pic.sprite);
 		}
 		Image *image = new Image;
@@ -89,10 +89,10 @@ string init_picture(RenderWindow & window, Files const &files, Picture &pic, Sys
 
 		if (!(image->loadFromFile(files.path + files.files[pic.num]))) {
 			std::cout << "error with: \n" << files.path + files.files[pic.num] << '\n';
-			pic.error = true;
+			pic.checkForError = true;
 		}
 		else {
-			pic.error = false;
+			pic.checkForError = false;
 		}
 		delete(pic.texture);
 		pic.texture = new Texture;
